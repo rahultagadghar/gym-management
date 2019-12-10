@@ -110,4 +110,9 @@
             to retrieve all docs from Expenses model  
                 * by default retrieve all docs
                 * filter ability using "from"-"to" date 
+        
+Images 
+        POST    
+                add image 
+                
 */
