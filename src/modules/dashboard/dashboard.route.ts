@@ -1,14 +1,14 @@
 import { Router } from "express";
-import { Management } from "./package.service";
 import { Update, Body } from "../../app.middleware";
-import { PackageDTO, Id } from "./package.dto";
+import { DashBoardService } from "./dashboard.service";
+import { DashBoardDTO } from "./dashboard.dto";
 
-export const management = Router();
+export const dashBoard = Router();
 
-const { getPackage, savePackage, updatePackage } = new Management();
+const { get } = new DashBoardService();
 
-management
-    .route("/package")
-    .get(getPackage)
-    .post(Body.bind(PackageDTO), savePackage)
-    .put(Body.bind(Id), Update.bind(PackageDTO), updatePackage);
+dashBoard
+    .route("/dashboard")
+    // .get(getPackage)
+    .post(Body.bind(DashBoardDTO), get)
+    // .put(Body.bind(Id), Update.bind(PackageDTO), updatePackage);

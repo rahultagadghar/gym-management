@@ -1,4 +1,5 @@
-import { IsString, IsNumber, IsDefined, IsNumberString, IsOptional, IsEmail, IsPhoneNumber, IsEnum, IsDate } from "class-validator";
+import { IsString, IsNumber, IsDefined, IsNumberString, IsOptional, IsEmail, IsPhoneNumber, IsEnum, IsDate, ValidateNested, IsDateString } from "class-validator";
+import { Type } from "class-transformer";
 
 export enum People {
     MALE = "male",
@@ -24,26 +25,45 @@ class Emergency {
     relation: string
 
     @IsString()
-    @IsPhoneNumber("in")
-    phone: number
+    @IsPhoneNumber("IN")
+    @IsOptional()
+    phone: string
 
     @IsString()
-    @IsPhoneNumber("in")
-    secondaryPhone: number
+    @IsPhoneNumber("IN")
+    @IsOptional()
+    secondaryPhone: string
 }
 
-class DashBoardDTO {
-    @IsString()
-    @IsOptional()
-    imageUrl: string;
+export class DashBoardDTO {
 
     @IsString()
     fullName: string
 
+    @IsEmail()
+    email: string // required
+
+    @IsPhoneNumber("IN")
+    phone: string// required
+
+    @IsDateString()
+    dob: string// required
+
+    @IsEnum(People)
+    sex: People  // required [male, female, trans],
+
+    @IsString()
+    package: string //dropDown [packageModel], required
+
+    @IsEnum(memberShipPeriod)
+    memberShip: memberShipPeriod  //, required [monthly, threeMonth, sixMonth, oneYear],
+
+    @IsNumber()
+    paidAmount: number //, required
+
     @IsString()
     @IsOptional()
     userId: number //[incrementing order starts from 0]
-
 
     @IsString()
     @IsOptional()
@@ -77,29 +97,14 @@ class DashBoardDTO {
     @IsOptional()
     address: string
 
-    @IsEmail()
-    email: string // required
-
-    @IsPhoneNumber("in")
-    phone: number// required
-
     @IsString()
-    dob: string// required
-    @IsEnum(People)
-    sex: People  // required [male, female, trans],
-
-    @IsString()
+    @IsOptional()
     personalTrainer: string
-
-    @IsString()
-    package: string //dropDown [packageModel], required
-
-    @IsEnum(memberShipPeriod)
-    memberShip: memberShipPeriod  //, required [monthly, threeMonth, sixMonth, oneYear],
 
     @IsNumber()
     @IsOptional()
     payment: number //, payment amount fetched from db , required [get by packageModel and memberShip],
+
 
     @IsDate()
     @IsOptional()
@@ -110,16 +115,24 @@ class DashBoardDTO {
     paidDate: Date // [Updated when customer pays]
 
     @IsNumber()
+    @IsOptional()
     discount: number //, default 0
 
     @IsNumber()
+    @IsOptional()
     oldBalance: number //, default 0
 
     @IsNumber()
+    @IsOptional()
     total: number //, required
 
-    @IsNumber()
-    paidAmount: number //, required
+    @IsString()
+    @IsOptional()
+    imageUrl: string;
+
+    @ValidateNested()
+    @Type(() => Emergency)
+    @IsOptional()
     emergency: Emergency
 }
 

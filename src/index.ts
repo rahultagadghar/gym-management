@@ -6,6 +6,9 @@ import { attachFinishMethod, expressErrorHandler } from './app.util';
 import { connect } from "mongoose";
 import { management } from './modules/package/package.route';
 import bodyParser from 'body-parser';
+import 'reflect-metadata'
+
+import { dashBoard } from './modules/dashboard/dashboard.route';
 const { log } = console;
 const { PORT, MONGODB_URL } = process.env;
 
@@ -23,6 +26,7 @@ connect(MONGODB_URL, { useUnifiedTopology: true, useNewUrlParser: true, useFindA
 app.use(attachFinishMethod);
 
 app.use(management)
+app.use(dashBoard)
 
 /* 
     INFO : 
