@@ -19,7 +19,7 @@ export class DashBoardRepo {
         return await new paymentModel(doc).save()
     }
 
-    public async getFullDashBoard(_id?, sort?: boolean, search?: string): Promise<object[]> {
+    public async getFullDashBoard(_id?, sort?: boolean, search?: string, memberShip?: string): Promise<object[]> {
         return new Promise((resolve, reject) => {
             const pipeLine = []
 
@@ -51,10 +51,19 @@ export class DashBoardRepo {
                     ]
                 }
             }
+
+            const memberPipe = {
+                $match: { memberShip }
+            }
             // first pipeLine state
             if (search) {
                 pipeLine.push(partialSearch)
             }
+
+            if (memberShip) {
+                pipeLine.push(memberPipe)
+            }
+
 
             pipeLine.push({ $lookup })
 

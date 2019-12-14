@@ -9,8 +9,8 @@ const dash = new DashBoardRepo()
 export class DashBoardService {
     async getDashboard(req, res: ExpressResponse, next) {
         try {
-            const { id, sort, search } = req.query
-            const dashBoard = await dash.getFullDashBoard(id, sort, search)
+            const { id, sort, search, memberShip } = req.query
+            const dashBoard = await dash.getFullDashBoard(id, sort, search, memberShip)
             res.finish(dashBoard)
         } catch (error) {
             next(error)
