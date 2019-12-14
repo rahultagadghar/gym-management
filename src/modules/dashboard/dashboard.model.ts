@@ -26,7 +26,7 @@ const dashBoardSchema = createSchema(
 
         paymentId: Type.objectId({ required: true }),
         packageId: Type.objectId({ required: true }),
-        
+
         emergency: Type.object().of({
             name: Type.string({ default: null }),
             relation: Type.string({ default: null }),
@@ -35,7 +35,6 @@ const dashBoardSchema = createSchema(
         })
     }
 );
-
 
 const paymentSchema = createSchema(
     {

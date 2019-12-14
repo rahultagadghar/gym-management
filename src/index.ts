@@ -14,16 +14,16 @@ const { PORT, MONGODB_URL } = process.env;
 
 app.listen(PORT, () => log("server on : ", PORT));
 
-app.use(bodyParser.json())
 
 connect(MONGODB_URL, { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: true })
     .then(() => {
         console.log("connected");
 
         /* 
-            INFO : attachFinishMethod callback attaches finish method (req.finish) to every incoming request  
+        INFO : attachFinishMethod callback attaches finish method (req.finish) to every incoming request  
         */
         app.use(attachFinishMethod);
+        app.use(bodyParser.json())
 
         app.use(management)
         app.use(dashBoard)

@@ -19,7 +19,7 @@ export class DashBoardRepo {
         return await new paymentModel(doc).save()
     }
 
-    public async getFullDashBoard(_id?): Promise<object[]> {
+    public async getFullDashBoard(_id?, sort?: boolean, search?: string): Promise<object[]> {
         return new Promise((resolve, reject) => {
             const pipeLine = []
 
@@ -31,10 +31,38 @@ export class DashBoardRepo {
             }
             const $match = { _id: new ObjectId(_id) }
 
+            const $sort = { "paymentDetails.dueAmount": -1 }
+
+            const partialSearch = {
+                $match: {
+                    $or: [
+                        {
+                            fullName: {
+                                $regex: search,
+                                $options: "i"
+                            }
+                        },
+                        {
+                            phone: {
+                                $regex: search,
+                                $options: "i"
+                            }
+                        }
+                    ]
+                }
+            }
+            // first pipeLine state
+            if (search) {
+                pipeLine.push(partialSearch)
+            }
+
             pipeLine.push({ $lookup })
 
             if (_id) {
                 pipeLine.push({ $match })
+            }
+            if (sort) {
+                pipeLine.push({ $sort })
             }
 
             dashBoardModel.aggregate(pipeLine).exec((err, result) => {
