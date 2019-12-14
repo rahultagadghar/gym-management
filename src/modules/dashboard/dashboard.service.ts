@@ -43,7 +43,8 @@ export class DashBoardService {
 
         const amountPaidTillNow = [{
             date: standardDate(),
-            amount: body.amount
+            amount: body.amount,
+            discount: body.discount
         }]
         const nextPaymentDate = getFutureDate(body.memberShip)
 

@@ -1,4 +1,4 @@
-import { dashBoardProps, dashBoardDoc, dashBoardModel, paymentModel, collections, paymentProps } from "./dashboard.model";
+import { dashBoardProps, dashBoardModel, paymentModel, collections, paymentProps } from "./dashboard.model";
 import { ObjectId } from "bson";
 
 
@@ -10,10 +10,11 @@ export class DashBoardRepo {
 
     public async updatePayment(doc) {
         const { _id, amountPaidTillNow, dueAmount, nextPaymentDate } = doc
-        const body = {
-            $push: { amountPaidTillNow }, dueAmount, nextPaymentDate
-        }
-        return await paymentModel.findOneAndUpdate({ _id }, body, { new: true })
+        const found: paymentProps = await paymentModel.findOne({ _id }).lean()
+        found.amountPaidTillNow.push(amountPaidTillNow)
+        found.dueAmount += dueAmount;
+        found.nextPaymentDate = nextPaymentDate
+        return await paymentModel.updateOne({ _id }, found)
     }
 
     public async getPayment(_id): Promise<dashBoardProps> {
