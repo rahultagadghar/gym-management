@@ -1,10 +1,11 @@
 {
-    "compilerOptions": {
-      "module": "commonjs",
-      "outDir": "dist",
-      "strict": false ,
-      "sourceMap": true,
-      "esModuleInterop": true,
-      "experimentalDecorators": true
-    }
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "dist",
+    "strict": false,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "target": "es6",
   }
+}

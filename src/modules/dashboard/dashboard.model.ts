@@ -1,46 +1,66 @@
-import { Schema, model } from 'mongoose'
+import mongoose from 'mongoose'
+import { createSchema, Type, typedModel, ExtractDoc, ExtractProps } from 'ts-mongoose';
+import AutoIncrementFactory from 'mongoose-sequence'
+const AutoIncrement = AutoIncrementFactory(mongoose)
 
-const collection = "dashboard"
+const dashBoardSchema = createSchema(
+    {
+        fullName: Type.string({ required: true }),
+        email: Type.string({ required: true }),
+        phone: Type.string({ required: true }),
+        dob: Type.date({ required: true }),
+        sex: Type.string({ required: true }),
+        memberShip: Type.string({ required: true }),
+        userId: Type.number({ required: true }), //[incrementing order starts from 0]
+        active: Type.boolean({ default: true }), // required [true when registers by default ],
+        occupation: Type.string({ default: null }),
+        weight: Type.number({ default: null }),
+        age: Type.number({ default: null }),
+        height: Type.number({ default: null }),
+        bmiLevel: Type.number({ default: null }),
+        healthIssues: Type.string({ default: null }),
+        address: Type.string({ default: null }),
+        personalTrainer: Type.string({ default: null }),
+        imageUrl: Type.string({ default: null }),
+        dateOfRegistration: Type.date({ default: Date.now }),
 
-const stringRequired = { type: String, required: true }
-const numberNull = { type: Number, default: null }
-const stringNull = { type: String, default: null }
-const dateNull = { type: Date, default: null }
-
-const dashBoardSchema = new Schema({
-    fullName: stringRequired,
-    email: stringRequired,
-    phone: stringRequired,
-    dob: { type: Date, required: true },
-    sex: stringRequired,
-    package: stringRequired,
-    memberShip: stringRequired,
-    paidAmount: { type: Number, required: true },
-    userId: numberNull, //[incrementing order starts from 0]
-    active: { type: Boolean, default: null }, // required [true when registers by default ],
-    occupation: stringNull,
-    weight: numberNull,
-    age: numberNull,
-    height: numberNull,
-    bmiLevel: numberNull,
-    healthIssues: stringNull,
-    address: stringNull,
-    personalTrainer: stringNull,
-    payment: numberNull, //, payment amount fetched from db , required [get by packageModel and memberShip],
-    dueDate: dateNull, //, required [automated by memberShip selection]
-    paidDate: dateNull, // [Updated when customer pays]
-    discount: { type: Number, default: 0 }, //, default 0
-    oldBalance: { type: Number, default: 0 }, //, default 0
-    total: numberNull, //, required
-    imageUrl: stringNull,
-    emergency: {
-        name: stringNull,
-        relation: stringNull,
-        phone: stringNull,
-        secondaryPhone: stringNull
+        paymentId: Type.objectId({ required: true }),
+        packageId: Type.objectId({ required: true }),
+        
+        emergency: Type.object().of({
+            name: Type.string({ default: null }),
+            relation: Type.string({ default: null }),
+            phone: Type.string({ default: null }),
+            secondaryPhone: Type.string({ default: null })
+        })
     }
+);
+
+
+const paymentSchema = createSchema(
+    {
+        userId: Type.number(),
+        nextPaymentDate: Type.date({ required: true }),
+        amountPaidTillNow: Type.array().of({
+            date: Type.date({ required: true }),
+            amount: Type.number({ required: true }),
+            discount: Type.number({ default: 0 }),
+        }),
+        dueAmount: Type.number({ default: 0 }),
+    })
+
+paymentSchema.plugin(AutoIncrement, { inc_field: 'userId' })
+
+export enum collections {
+    DASHBOARD = "dashboards",
+    PAYMENT = "payments"
 }
 
-})
+export const dashBoardModel = typedModel(collections.DASHBOARD, dashBoardSchema);
+export const paymentModel = typedModel(collections.PAYMENT, paymentSchema)
 
-export const dashBoardModel = model(collection, dashBoardSchema, collection)
+export type dashBoardProps = ExtractProps<typeof dashBoardSchema>;
+export type dashBoardDoc = ExtractDoc<typeof dashBoardSchema>;
+
+export type paymentProps = ExtractProps<typeof paymentSchema>;
+

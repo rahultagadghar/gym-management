@@ -14,7 +14,6 @@ export enum memberShipPeriod {
     ONE_YEAR = "oneYear"
 }
 
-
 class Emergency {
     @IsString()
     @IsOptional()
@@ -34,7 +33,6 @@ class Emergency {
     @IsOptional()
     secondaryPhone: string
 }
-
 export class DashBoardDTO {
 
     @IsString()
@@ -53,17 +51,16 @@ export class DashBoardDTO {
     sex: People  // required [male, female, trans],
 
     @IsString()
-    package: string //dropDown [packageModel], required
+    packageId: string //dropDown [packageModel], required
 
     @IsEnum(memberShipPeriod)
     memberShip: memberShipPeriod  //, required [monthly, threeMonth, sixMonth, oneYear],
 
     @IsNumber()
-    paidAmount: number //, required
+    amount: number
 
-    @IsString()
-    @IsOptional()
-    userId: number //[incrementing order starts from 0]
+    @IsNumber()
+    discount: number
 
     @IsString()
     @IsOptional()
@@ -100,31 +97,6 @@ export class DashBoardDTO {
     @IsString()
     @IsOptional()
     personalTrainer: string
-
-    @IsNumber()
-    @IsOptional()
-    payment: number //, payment amount fetched from db , required [get by packageModel and memberShip],
-
-
-    @IsDate()
-    @IsOptional()
-    dueDate: Date //, required [automated by memberShip selection]
-
-    @IsDate()
-    @IsOptional()
-    paidDate: Date // [Updated when customer pays]
-
-    @IsNumber()
-    @IsOptional()
-    discount: number //, default 0
-
-    @IsNumber()
-    @IsOptional()
-    oldBalance: number //, default 0
-
-    @IsNumber()
-    @IsOptional()
-    total: number //, required
 
     @IsString()
     @IsOptional()

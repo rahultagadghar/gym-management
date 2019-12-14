@@ -11,51 +11,53 @@ import { ExpressError } from "./app.util";
 */
 
 class ClientInput {
-
     private mapErrorMessages(o) {
         return {
-            property: o.property, constraints: Object.values(o.constraints)
-        }
+            property: o.property,
+            constraints: Object.values(o.constraints)
+        };
     }
 
     async validator(input, req, res, next) {
         try {
-            const { target, jsonObject, ignoreProperties } = input
+            const { target, jsonObject, ignoreProperties } = input;
             const classInstance = plainToClass(jsonObject, target);
-            let configuration: ValidatorOptions = { validationError: { target: false } }
+            let configuration: ValidatorOptions = {
+                validationError: { target: false, value: false }
+            };
             if (ignoreProperties) {
-                configuration.skipMissingProperties = true
+                configuration.skipMissingProperties = true;
             }
 
-            const result = await Validator(classInstance, configuration)
+            const result = await Validator(classInstance, configuration);
             if (!result.length) {
-                return next()
+                return next();
             }
-            const allErrorMessages = result.map(this.mapErrorMessages)
-            throw new ExpressError("Invalid request", 400, allErrorMessages)
+            // const allErrorMessages = result.map(this.mapErrorMessages)
+            throw new ExpressError("Invalid request", 400, result);
         } catch (error) {
-            next(error)
+            next(error);
         }
     }
 }
 
 export function Query(req, res, next) {
-    const input = { target: req.query, jsonObject: this }
-    return new ClientInput().validator(input, req, res, next)
+    const input = { target: req.query, jsonObject: this };
+    return new ClientInput().validator(input, req, res, next);
 }
 
 export function Body(req, res, next) {
-    const input = { target: req.body, jsonObject: this }
-    return new ClientInput().validator(input, req, res, next)
+    const input = { target: req.body, jsonObject: this };
+    return new ClientInput().validator(input, req, res, next);
 }
 
 // Update middleware ignores missing properties
 export function Update(req, res, next) {
-    const input = { target: req.body, jsonObject: this, ignoreProperties: true }
-    return new ClientInput().validator(input, req, res, next)
+    const input = { target: req.body, jsonObject: this, ignoreProperties: true };
+    return new ClientInput().validator(input, req, res, next);
 }
 
 export function Params(req, res, next) {
-    const input = { target: req.params, jsonObject: this }
-    return new ClientInput().validator(input, req, res, next)
+    const input = { target: req.params, jsonObject: this };
+    return new ClientInput().validator(input, req, res, next);
 }
