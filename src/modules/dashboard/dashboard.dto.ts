@@ -1,6 +1,25 @@
 import { IsString, IsNumber, IsDefined, IsNumberString, IsOptional, IsEmail, IsPhoneNumber, IsEnum, IsDate, ValidateNested, IsDateString } from "class-validator";
 import { Type } from "class-transformer";
 import { MemberShipPeriod, People } from './dashboard.interface'
+
+export class PaymentDTO {
+    @IsString()
+    @IsDefined()
+    packageId: string
+
+    @IsEnum(MemberShipPeriod)
+    @IsDefined()
+    memberShip: MemberShipPeriod
+
+    @IsNumber()
+    @IsDefined()
+    amount: number
+
+    @IsNumber()
+    @IsDefined()
+    discount: number
+}
+
 class Emergency {
     @IsString()
     @IsOptional()

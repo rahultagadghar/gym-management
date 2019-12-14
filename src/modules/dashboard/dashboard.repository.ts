@@ -9,15 +9,11 @@ export class DashBoardRepo {
     }
 
     public async updatePayment(doc) {
-        // {
-        //     date: standardDate(),
-        //     amount: 400
-        // }
-        const { _id, amountPaidTillNow } = doc
-        delete doc.amountPaidTillNow;
-        return await paymentModel.findOneAndUpdate({ _id }, {
-            $push: { amountPaidTillNow }, ...doc
-        }, { new: true })
+        const { _id, amountPaidTillNow, dueAmount, nextPaymentDate } = doc
+        const body = {
+            $push: { amountPaidTillNow }, dueAmount, nextPaymentDate
+        }
+        return await paymentModel.findOneAndUpdate({ _id }, body, { new: true })
     }
 
     public async getPayment(_id): Promise<dashBoardProps> {

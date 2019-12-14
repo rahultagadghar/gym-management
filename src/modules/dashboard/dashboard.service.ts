@@ -18,6 +18,21 @@ export class DashBoardService {
         }
     }
 
+    async updatePayment(req, res: ExpressResponse, next) {
+        try {
+            const { _id } = req.body
+            const { amountPaidTillNow, dueAmount, nextPaymentDate } = await new DashBoardService().calculateAmount(req.body)
+
+            const payload = { _id, amountPaidTillNow: amountPaidTillNow[0], dueAmount, nextPaymentDate }
+
+            const result = await dash.updatePayment(payload)
+
+            res.finish(result)
+        } catch (error) {
+            next(error)
+        }
+    }
+
     async calculateAmount(body) {
 
         const gotPackage = await pack.getDoc(body.packageId)
@@ -56,21 +71,8 @@ export class DashBoardService {
     async updateDashBoard(req, res: ExpressResponse, next) {
         try {
             const body: DashBoardDTO = req.body
-
             const result = await dash.updateDash(body)
-
             res.finish(result)
-
-
-
-
-            // {
-            //     //     date: standardDate(),
-            //     //     amount: 400
-            //     // }
-
-
-
         } catch (error) {
             next(error)
         }
