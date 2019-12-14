@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import { createSchema, Type, typedModel, ExtractDoc, ExtractProps } from 'ts-mongoose';
 import AutoIncrementFactory from 'mongoose-sequence'
+import { standardDate } from './dashboard.util';
 const AutoIncrement = AutoIncrementFactory(mongoose)
 
 const dashBoardSchema = createSchema(
@@ -22,7 +23,7 @@ const dashBoardSchema = createSchema(
         address: Type.string({ default: null }),
         personalTrainer: Type.string({ default: null }),
         imageUrl: Type.string({ default: null }),
-        dateOfRegistration: Type.date({ default: Date.now }),
+        dateOfRegistration: Type.date({ default: standardDate() }),
 
         paymentId: Type.objectId({ required: true }),
         packageId: Type.objectId({ required: true }),

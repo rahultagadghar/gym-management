@@ -21,11 +21,16 @@ const getMothInNumbers = (period: string): number => {
 
 export const getFutureDate = (period: string) => {
     const months = getMothInNumbers(period)
-    const result = moment(Date.now()).add(months, 'M').toDate()
-    // const result = moment(Date.now()).add(months, 'M').format(FORMAT);
-
+    const result = standardDate(moment(standardDate()).add(months, 'M').toDate())
     console.log(result, typeof result)
     return result
+}
+
+export const standardDate = (dateString?) => {
+    if (!dateString) {
+        return new Date()
+    }
+    return new Date(dateString)
 }
 
 getFutureDate("threeMonth")
