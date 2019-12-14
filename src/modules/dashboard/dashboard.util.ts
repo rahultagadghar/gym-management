@@ -1,9 +1,6 @@
 import moment from 'moment'
 import { MemberShipPeriod } from './dashboard.interface';
 import { ExpressError } from '../../app.util';
-
-const FORMAT = 'DD-MM-YYYY'
-
 const getMothInNumbers = (period: string): number => {
     switch (period) {
         case MemberShipPeriod.MONTHLY:
@@ -32,5 +29,3 @@ export const standardDate = (dateString?) => {
     }
     return new Date(dateString)
 }
-
-getFutureDate("threeMonth")

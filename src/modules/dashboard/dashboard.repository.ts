@@ -1,10 +1,23 @@
 import { dashBoardProps, dashBoardDoc, dashBoardModel, paymentModel, collections, paymentProps } from "./dashboard.model";
 import { ObjectId } from "bson";
 
+
 export class DashBoardRepo {
 
     public async getDoc(_id): Promise<dashBoardProps> {
         return await dashBoardModel.findOne({ _id }).lean();
+    }
+
+    public async updatePayment(doc) {
+        // {
+        //     date: standardDate(),
+        //     amount: 400
+        // }
+        const { _id, amountPaidTillNow } = doc
+        delete doc.amountPaidTillNow;
+        return await paymentModel.findOneAndUpdate({ _id }, {
+            $push: { amountPaidTillNow }, ...doc
+        }, { new: true })
     }
 
     public async getPayment(_id): Promise<dashBoardProps> {
@@ -52,6 +65,25 @@ export class DashBoardRepo {
                 }
             }
 
+            const calculateAge = {
+                $addFields: {
+                    age: {
+                        $floor: {
+                            $let: {
+                                vars: {
+                                    diff: {
+                                        $subtract: [new Date(), "$dob"]
+                                    }
+                                },
+                                in: {
+                                    $divide: ["$$diff", (365 * 24 * 60 * 60 * 1000)]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             const memberPipe = {
                 $match: { memberShip }
             }
@@ -74,6 +106,8 @@ export class DashBoardRepo {
                 pipeLine.push({ $sort })
             }
 
+            pipeLine.push(calculateAge)
+
             dashBoardModel.aggregate(pipeLine).exec((err, result) => {
                 if (err) {
                     reject(err)
@@ -84,5 +118,11 @@ export class DashBoardRepo {
 
     }
 
-}
+    public async updateDash(doc) {
+        const { _id } = doc
+        return await dashBoardModel
+            .findOneAndUpdate({ _id }, doc, { new: true })
+            .lean();
+    }
 
+}

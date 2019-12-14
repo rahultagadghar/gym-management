@@ -63,10 +63,6 @@ export class DashBoardDTO {
 
     @IsString()
     @IsOptional()
-    age: number
-
-    @IsString()
-    @IsOptional()
     height: number
 
     @IsString()

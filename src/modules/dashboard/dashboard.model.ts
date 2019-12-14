@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import { createSchema, Type, typedModel, ExtractDoc, ExtractProps } from 'ts-mongoose';
 import AutoIncrementFactory from 'mongoose-sequence'
+import mongooseImmutable from 'mongoose-immutable-plugin'
 import { standardDate } from './dashboard.util';
 const AutoIncrement = AutoIncrementFactory(mongoose)
 
@@ -11,22 +12,22 @@ const dashBoardSchema = createSchema(
         phone: Type.string({ required: true }),
         dob: Type.date({ required: true }),
         sex: Type.string({ required: true }),
-        memberShip: Type.string({ required: true }),
-        userId: Type.number({ required: true }), //[incrementing order starts from 0]
+        userId: Type.number(), //[incrementing order starts from 0]
         active: Type.boolean({ default: true }), // required [true when registers by default ],
         occupation: Type.string({ default: null }),
         weight: Type.number({ default: null }),
-        age: Type.number({ default: null }),
         height: Type.number({ default: null }),
         bmiLevel: Type.number({ default: null }),
         healthIssues: Type.string({ default: null }),
         address: Type.string({ default: null }),
         personalTrainer: Type.string({ default: null }),
         imageUrl: Type.string({ default: null }),
-        dateOfRegistration: Type.date({ default: standardDate() }),
 
-        paymentId: Type.objectId({ required: true }),
-        packageId: Type.objectId({ required: true }),
+        dateOfRegistration: Type.date({ default: standardDate(), immutable: true }),
+        memberShip: Type.string({ required: true, immutable: true }),
+
+        paymentId: Type.objectId({ required: true, immutable: true }),
+        packageId: Type.objectId({ required: true, immutable: true }),
 
         emergency: Type.object().of({
             name: Type.string({ default: null }),
@@ -39,7 +40,6 @@ const dashBoardSchema = createSchema(
 
 const paymentSchema = createSchema(
     {
-        userId: Type.number(),
         nextPaymentDate: Type.date({ required: true }),
         amountPaidTillNow: Type.array().of({
             date: Type.date({ required: true }),
@@ -49,7 +49,8 @@ const paymentSchema = createSchema(
         dueAmount: Type.number({ default: 0 }),
     })
 
-paymentSchema.plugin(AutoIncrement, { inc_field: 'userId' })
+dashBoardSchema.plugin(AutoIncrement, { inc_field: 'userId' })
+dashBoardSchema.plugin(mongooseImmutable)
 
 export enum collections {
     DASHBOARD = "dashboards",

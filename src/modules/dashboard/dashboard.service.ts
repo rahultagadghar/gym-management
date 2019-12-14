@@ -18,31 +18,59 @@ export class DashBoardService {
         }
     }
 
+    async calculateAmount(body) {
+
+        const gotPackage = await pack.getDoc(body.packageId)
+
+        const amountToPay = gotPackage[body.memberShip]
+
+        const dueAmount = amountToPay - body.amount - body.discount
+
+        const amountPaidTillNow = [{
+            date: standardDate(),
+            amount: body.amount
+        }]
+        const nextPaymentDate = getFutureDate(body.memberShip)
+
+        return {
+            amountPaidTillNow, nextPaymentDate, dueAmount
+        }
+    }
+
     async saveDashboard(req, res: ExpressResponse, next) {
         try {
             const body: DashBoardDTO = req.body
 
-            const gotPackage = await pack.getDoc(body.packageId)
+            const paymentPayload = await new DashBoardService().calculateAmount(body)
 
-            const amountToPay = gotPackage[body.memberShip]
+            const { _id } = await dash.savePayment(paymentPayload); //userId autoIncremented by mongoose
 
-            const dueAmount = amountToPay - body.amount - body.discount
-
-            const amountPaidTillNow = [{
-                date: standardDate(),
-                amount: body.amount
-            }]
-
-            const nextPaymentDate = getFutureDate(body.memberShip)
-
-            const paymentPayload = {
-                amountPaidTillNow, nextPaymentDate, dueAmount
-            }
-            const { _id, userId } = await dash.savePayment(paymentPayload); //userId autoIncremented by mongoose
-
-            const payloadForDashBoard = { ...body, userId, paymentId: _id }
+            const payloadForDashBoard = { ...body, paymentId: _id }
             const result = await dash.save(payloadForDashBoard)
             res.finish(result)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async updateDashBoard(req, res: ExpressResponse, next) {
+        try {
+            const body: DashBoardDTO = req.body
+
+            const result = await dash.updateDash(body)
+
+            res.finish(result)
+
+
+
+
+            // {
+            //     //     date: standardDate(),
+            //     //     amount: 400
+            //     // }
+
+
+
         } catch (error) {
             next(error)
         }
