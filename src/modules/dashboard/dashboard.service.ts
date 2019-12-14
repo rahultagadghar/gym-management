@@ -2,6 +2,7 @@ import { DashBoardRepo, } from './dashboard.repository';
 import { Package } from './../package/package.repository';
 import { ExpressResponse } from '../../app.interface';
 import { DashBoardDTO } from './dashboard.dto';
+import { getFutureDate } from './dashboard.util';
 
 const pack = new Package()
 const dash = new DashBoardRepo()
@@ -32,7 +33,7 @@ export class DashBoardService {
                 amount: body.amount
             }]
 
-            const nextPaymentDate = new Date()
+            const nextPaymentDate = getFutureDate(body.memberShip)
 
             const paymentPayload = {
                 amountPaidTillNow, nextPaymentDate, dueAmount
@@ -47,3 +48,4 @@ export class DashBoardService {
         }
     }
 }
+

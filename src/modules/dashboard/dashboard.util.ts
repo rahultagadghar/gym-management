@@ -1,0 +1,31 @@
+import moment from 'moment'
+import { MemberShipPeriod } from './dashboard.interface';
+import { ExpressError } from '../../app.util';
+
+const FORMAT = 'DD-MM-YYYY'
+
+const getMothInNumbers = (period: string): number => {
+    switch (period) {
+        case MemberShipPeriod.MONTHLY:
+            return 1
+        case MemberShipPeriod.THREE_MONTH:
+            return 3
+        case MemberShipPeriod.SIX_MONTH:
+            return 6
+        case MemberShipPeriod.ONE_YEAR:
+            return 12
+        default:
+            throw new ExpressError("Invalid subscription");
+    }
+}
+
+export const getFutureDate = (period: string) => {
+    const months = getMothInNumbers(period)
+    const result = moment(Date.now()).add(months, 'M').toDate()
+    // const result = moment(Date.now()).add(months, 'M').format(FORMAT);
+
+    console.log(result, typeof result)
+    return result
+}
+
+getFutureDate("threeMonth")

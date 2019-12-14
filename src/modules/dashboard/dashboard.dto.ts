@@ -1,19 +1,6 @@
 import { IsString, IsNumber, IsDefined, IsNumberString, IsOptional, IsEmail, IsPhoneNumber, IsEnum, IsDate, ValidateNested, IsDateString } from "class-validator";
 import { Type } from "class-transformer";
-
-export enum People {
-    MALE = "male",
-    FEMALE = "female",
-    TRANS = "trans"
-}
-
-export enum memberShipPeriod {
-    MONTHLY = "monthly",
-    THREE_MONTH = "threeMonth",
-    SIX_MONTH = "sixMonth",
-    ONE_YEAR = "oneYear"
-}
-
+import { MemberShipPeriod, People } from './dashboard.interface'
 class Emergency {
     @IsString()
     @IsOptional()
@@ -53,8 +40,8 @@ export class DashBoardDTO {
     @IsString()
     packageId: string //dropDown [packageModel], required
 
-    @IsEnum(memberShipPeriod)
-    memberShip: memberShipPeriod  //, required [monthly, threeMonth, sixMonth, oneYear],
+    @IsEnum(MemberShipPeriod)
+    memberShip: MemberShipPeriod  //, required [monthly, threeMonth, sixMonth, oneYear],
 
     @IsNumber()
     amount: number
