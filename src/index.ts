@@ -5,10 +5,10 @@ const app = express();
 import 'reflect-metadata'
 import { connect } from "mongoose";
 import bodyParser from 'body-parser';
+import morgan from 'morgan'
 import { attachFinishMethod, expressErrorHandler } from './app.util';
-import { management } from './modules/package/package.route';
 
-import { dashBoard } from './modules/dashboard/dashboard.route';
+import { appRoutes } from './app.route';
 const { log } = console;
 const { PORT, MONGODB_URL } = process.env;
 
@@ -19,14 +19,18 @@ connect(MONGODB_URL, { useUnifiedTopology: true, useNewUrlParser: true, useFindA
     .then(() => {
         console.log("connected");
 
+        app.use(morgan('common')) // logs all request
+
         /* 
         INFO : attachFinishMethod callback attaches finish method (req.finish) to every incoming request  
         */
         app.use(attachFinishMethod);
+        // app.use()
         app.use(bodyParser.json())
 
-        app.use(management)
-        app.use(dashBoard)
+
+        appRoutes(app)
+
 
         /* 
             INFO : 

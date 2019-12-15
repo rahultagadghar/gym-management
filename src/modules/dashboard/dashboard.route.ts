@@ -9,7 +9,7 @@ export const dashBoard = Router();
 const { saveDashboard, getDashboard, updateDashBoard, updatePayment, getCounts } = new DashBoardService();
 
 dashBoard
-    .route("/dashboard")
+    .route("/")
     .get(getDashboard)
     .post(Body.bind(DashBoardDTO), saveDashboard)
     .put(Body.bind(Id), Update.bind(DashBoardDTO), updateDashBoard)

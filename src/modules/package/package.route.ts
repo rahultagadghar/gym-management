@@ -8,7 +8,7 @@ export const management = Router();
 const { getPackage, savePackage, updatePackage } = new Management();
 
 management
-    .route("/package")
+    .route("/")
     .get(getPackage)
     .post(Body.bind(PackageDTO), savePackage)
     .put(Body.bind(Id), Update.bind(PackageDTO), updatePackage);
