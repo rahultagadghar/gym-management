@@ -1,5 +1,6 @@
 import { dashBoardProps, dashBoardModel, paymentModel, collections, paymentProps } from "./dashboard.model";
 import { ObjectId } from "bson";
+import { standardDate } from "./dashboard.util";
 
 
 export class DashBoardRepo {
@@ -69,7 +70,7 @@ export class DashBoardRepo {
                             $let: {
                                 vars: {
                                     diff: {
-                                        $subtract: [new Date(), "$dob"]
+                                        $subtract: [standardDate(), "$dob"]
                                     }
                                 },
                                 in: {
