@@ -54,7 +54,8 @@ dashBoardSchema.plugin(mongooseImmutable)
 
 export enum collections {
     DASHBOARD = "dashboards",
-    PAYMENT = "payments"
+    PAYMENT = "payments",
+    PACKAGE = "packages"
 }
 
 export const dashBoardModel = typedModel(collections.DASHBOARD, dashBoardSchema);

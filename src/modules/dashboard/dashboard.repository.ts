@@ -114,6 +114,84 @@ export class DashBoardRepo {
         })
 
     }
+    public async getDashBoardCounts(): Promise<object> {
+        return new Promise((resolve, reject) => {
+            dashBoardModel.aggregate([
+                {
+                    $lookup: {
+                        from: collections.PAYMENT, // targetTable
+                        localField: "paymentId", // inputTable field
+                        foreignField: "_id", // targetTable field
+                        as: "paymentDetails" // inputTable output field
+                    }
+                },
+                {
+                    $lookup: {
+                        from: collections.PACKAGE, // targetTable
+                        localField: "packageId", // inputTable field
+                        foreignField: "_id", // targetTable field
+                        as: "packageDetails" // inputTable output field
+                    }
+                },
+                {
+                    $addFields: {
+                        paymentDetails: { $arrayElemAt: ["$paymentDetails", 0] },
+                        packageDetails: { $arrayElemAt: ["$packageDetails", 0] },
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalUsers: {
+                            $sum: 1
+                        },
+                        pendingAmount: {
+                            $sum: "$paymentDetails.dueAmount"
+                        },
+                        activeUsers: {
+                            $sum: {
+                                $cond: [{ $eq: ["$active", true] }, 1, 0]
+                            }
+                        },
+                        inActiveUsers: {
+                            $sum: {
+                                $cond: [{ $eq: ["$active", false] }, 1, 0]
+                            }
+                        },
+                        monthly: {
+                            $sum: {
+                                $cond: [{ $eq: ["$memberShip", "monthly"] }, 1, 0]
+                            }
+                        },
+                        threeMonth: {
+                            $sum: {
+                                $cond: [{ $eq: ["$memberShip", "threeMonth"] }, 1, 0]
+                            }
+                        },
+                        sixMonth: {
+                            $sum: {
+                                $cond: [{ $eq: ["$memberShip", "sixMonth"] }, 1, 0]
+                            }
+                        },
+                        oneYear: {
+                            $sum: {
+                                $cond: [{ $eq: ["$memberShip", "oneYear"] }, 1, 0]
+                            }
+                        }
+                    }
+                },
+
+            ])
+                .allowDiskUse(true)
+                .exec((err, result) => {
+                    if (err) {
+                        reject(err)
+                    }
+                    resolve(result[0])
+                })
+
+        })
+    }
 
     public async updateDash(doc) {
         const { _id } = doc
@@ -123,3 +201,6 @@ export class DashBoardRepo {
     }
 
 }
+
+// const check = new DashBoardRepo()
+// check.getDashBoardCounts().then(e => { console.log(JSON.stringify(e)) })

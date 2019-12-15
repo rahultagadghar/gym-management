@@ -78,5 +78,15 @@ export class DashBoardService {
             next(error)
         }
     }
+
+    async getCounts(req, res: ExpressResponse, next) {
+        try {
+            const result = await dash.getDashBoardCounts()
+            res.finish(result)
+        } catch (error) {
+            next(error)
+        }
+    }
+
 }
 
