@@ -1,18 +1,30 @@
 import moment from 'moment'
-import ms from 'ms'
+import schedule from 'node-schedule'
 
 const dateFromDb = new Date("2019-12-18")
-
 const myDate = new Date()
-
 const today = new Date().getDate()
-
 const last = moment().subtract('1', 'd').toDate().getDate()
-
 console.log(last - today)
 
-const daysInMs = ms("1 day")
-console.log(daysInMs)
+/* 
+    *    *    *    *    *    *
+    ┬    ┬    ┬    ┬    ┬    ┬
+    │    │    │    │    │    │
+    │    │    │    │    │    └ day of week (0 - 7) (0 or 7 is Sun)
+    │    │    │    │    └───── month (1 - 12)
+    │    │    │    └────────── day of month (1 - 31)
+    │    │    └─────────────── hour (0 - 23)
+    │    └──────────────────── minute (0 - 59)
+    └───────────────────────── second (0 - 59, OPTIONAL) 
+*/
+
+// Schedules jobs every day at 01:00:10
+
+schedule.scheduleJob('10 0 1 * * *', () => {
+    console.log("Hey")
+})
+
 
 
 
