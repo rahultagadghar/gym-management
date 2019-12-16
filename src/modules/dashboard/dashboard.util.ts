@@ -27,5 +27,9 @@ export const standardDate = (dateString?) => {
     if (!dateString) {
         return new Date()
     }
-    return new Date(dateString)
+    const validateDate = new Date(dateString)
+    if (validateDate.toJSON()) {
+        return validateDate
+    }
+    throw new ExpressError("Invalid date!", 400)
 }
