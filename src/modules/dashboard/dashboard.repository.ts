@@ -3,6 +3,19 @@ import { ObjectId } from "bson";
 import { standardDate } from "./dashboard.util";
 import { ExpressError } from "../../app.util";
 
+const aggregations = {
+    paymentById: {
+        $lookup: {
+            from: collections.PAYMENT, // targetTable
+            localField: "paymentId", // inputTable field
+            foreignField: "_id", // targetTable field
+            as: "paymentDetails" // inputTable output field
+        }
+    },
+    paymentAsObject: {
+        paymentDetails: { $arrayElemAt: ["$paymentDetails", 0] }
+    }
+}
 
 export class DashBoardRepo {
 
@@ -38,12 +51,12 @@ export class DashBoardRepo {
         return new Promise((resolve, reject) => {
             const pipeLine = []
 
-            const $lookup = {
-                from: collections.PAYMENT, // targetTable
-                localField: "paymentId", // inputTable field
-                foreignField: "_id", // targetTable field
-                as: "paymentDetails" // inputTable output field
-            }
+            // const $lookup = {
+            //     from: collections.PAYMENT, // targetTable
+            //     localField: "paymentId", // inputTable field
+            //     foreignField: "_id", // targetTable field
+            //     as: "paymentDetails" // inputTable output field
+            // }
             const $match = { _id: new ObjectId(_id) }
 
             const $sort = { "paymentDetails.dueAmount": -1 }
@@ -99,7 +112,7 @@ export class DashBoardRepo {
             }
 
 
-            pipeLine.push({ $lookup })
+            pipeLine.push(aggregations.paymentById)
 
             if (_id) {
                 pipeLine.push({ $match })
@@ -109,6 +122,12 @@ export class DashBoardRepo {
             }
 
             pipeLine.push(calculateAge)
+            
+            pipeLine.push({
+                $addFields: {
+                    ...aggregations.paymentAsObject
+                }
+            })
 
             dashBoardModel.aggregate(pipeLine).exec((err, result) => {
                 if (err) {
@@ -122,14 +141,7 @@ export class DashBoardRepo {
     public async getDashBoardCounts(): Promise<object> {
         return new Promise((resolve, reject) => {
             dashBoardModel.aggregate([
-                {
-                    $lookup: {
-                        from: collections.PAYMENT, // targetTable
-                        localField: "paymentId", // inputTable field
-                        foreignField: "_id", // targetTable field
-                        as: "paymentDetails" // inputTable output field
-                    }
-                },
+                aggregations.paymentById,
                 {
                     $lookup: {
                         from: collections.PACKAGE, // targetTable
@@ -140,7 +152,7 @@ export class DashBoardRepo {
                 },
                 {
                     $addFields: {
-                        paymentDetails: { $arrayElemAt: ["$paymentDetails", 0] },
+                        ...aggregations.paymentAsObject,
                         packageDetails: { $arrayElemAt: ["$packageDetails", 0] },
                     }
                 },
