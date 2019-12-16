@@ -34,6 +34,9 @@ export class DashBoardService {
     }
 
     async calculateAmount(body: DashBoardDTO, registrationDate = null) {
+        /* 
+            registrationDate will be null while updating payments
+        */
 
         const gotPackage = await pack.getDoc(body.packageId)
 
@@ -41,12 +44,15 @@ export class DashBoardService {
 
         const dueAmount = amountToPay - body.amount - body.discount
 
+        const date = standardDate(registrationDate)
+
         const amountPaidTillNow = [{
-            date: registrationDate || standardDate(),
+            date,
             amount: body.amount,
             discount: body.discount
         }]
-        const nextPaymentDate = getFutureDate(body.memberShip)
+
+        const nextPaymentDate = getFutureDate(body.memberShip, date)
 
         return {
             amountPaidTillNow, nextPaymentDate, dueAmount

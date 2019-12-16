@@ -1,6 +1,7 @@
 import { dashBoardProps, dashBoardModel, paymentModel, collections, paymentProps } from "./dashboard.model";
 import { ObjectId } from "bson";
 import { standardDate } from "./dashboard.util";
+import { ExpressError } from "../../app.util";
 
 
 export class DashBoardRepo {
@@ -12,6 +13,9 @@ export class DashBoardRepo {
     public async updatePayment(doc) {
         const { _id, amountPaidTillNow, dueAmount, nextPaymentDate } = doc
         const found: paymentProps = await paymentModel.findOne({ _id }).lean()
+        if (!found) {
+            throw new ExpressError("Invalid payment details")
+        }
         found.amountPaidTillNow.push(amountPaidTillNow)
         found.dueAmount += dueAmount;
         found.nextPaymentDate = nextPaymentDate

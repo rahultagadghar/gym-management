@@ -16,10 +16,9 @@ const getMothInNumbers = (period: string): number => {
     }
 }
 
-export const getFutureDate = (period: string) => {
+export const getFutureDate = (period: string, date) => {
     const months = getMothInNumbers(period)
-    const result = standardDate(moment(standardDate()).add(months, 'M').toDate())
-    console.log(result, typeof result)
+    const result = standardDate(moment(date).add(months, 'M').toDate())
     return result
 }
 
