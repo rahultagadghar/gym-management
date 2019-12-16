@@ -35,7 +35,11 @@ export class DashBoardRepo {
         return await paymentModel.updateOne({ _id }, found)
     }
 
-    public async getPayment(_id): Promise<dashBoardProps> {
+    public async getAllPayments(): Promise<paymentProps[]> {
+        return await paymentModel.find().lean()
+    }
+
+    public async getPayment(_id): Promise<paymentProps> {
         return await paymentModel.findOne({ _id }).lean();
     }
 
@@ -122,7 +126,7 @@ export class DashBoardRepo {
             }
 
             pipeLine.push(calculateAge)
-            
+
             pipeLine.push({
                 $addFields: {
                     ...aggregations.paymentAsObject

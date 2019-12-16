@@ -1,6 +1,9 @@
 import { standardDate } from './../dashboard/dashboard.util';
 import moment from 'moment'
 import schedule from 'node-schedule'
+import { DashBoardRepo } from '../dashboard/dashboard.repository';
+
+const payment = new DashBoardRepo()
 
 function getDateDiff(dateFromDb) {
     const today = standardDate().getDate()
@@ -26,9 +29,33 @@ console.log(new Date("2019-12-17").getDate())
 
 // Schedules jobs every day at 01:00:10
 
-schedule.scheduleJob('10 0 1 * * *', () => {
-    console.log("Hey")
-})
+const sendNotification = async () => {
+    const result = await payment.getAllPayments()
+    let length = result.length
+    let notifiedUser = 0
+
+    if (!length) {
+        return
+    }
+
+    while (!(length < 0)) {
+        const date = getDateDiff(result[length].nextPaymentDate)
+
+        if (!date) {
+            length--
+            continue
+        }
+
+        console.log('notified')
+        // send notifications to all users scope waits till functions is resolved
+
+    }
+    console.log(`Notified ${notifiedUser} users!`)
+}
+
+schedule.scheduleJob('10 0 1 * * *', sendNotification)
+
+// sendNotification()
 
 
 
