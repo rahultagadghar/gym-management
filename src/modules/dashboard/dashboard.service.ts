@@ -33,7 +33,7 @@ export class DashBoardService {
         }
     }
 
-    async calculateAmount(body: DashBoardDTO) {
+    async calculateAmount(body: DashBoardDTO, registrationDate = null) {
 
         const gotPackage = await pack.getDoc(body.packageId)
 
@@ -42,7 +42,7 @@ export class DashBoardService {
         const dueAmount = amountToPay - body.amount - body.discount
 
         const amountPaidTillNow = [{
-            date: body.dateOfRegistration,
+            date: registrationDate || standardDate(),
             amount: body.amount,
             discount: body.discount
         }]
@@ -56,12 +56,8 @@ export class DashBoardService {
     async saveDashboard(req, res: ExpressResponse, next) {
         try {
             const { body } = req
-            
-            if (!body.dateOfRegistration) {
-                body.dateOfRegistration = standardDate()
-            }
 
-            const paymentPayload = await new DashBoardService().calculateAmount(body)
+            const paymentPayload = await new DashBoardService().calculateAmount(body, body.dateOfRegistration)
 
             const { _id } = await dash.savePayment(paymentPayload); //userId autoIncremented by mongoose
 
