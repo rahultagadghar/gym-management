@@ -22,7 +22,7 @@ export const getFutureDate = (period: string, date) => {
     return result
 }
 
-export const standardDate = (dateString?) => {
+export const standardDate = (dateString?): Date => {
     if (!dateString) {
         return new Date()
     }

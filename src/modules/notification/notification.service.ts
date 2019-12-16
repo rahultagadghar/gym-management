@@ -1,11 +1,16 @@
+import { standardDate } from './../dashboard/dashboard.util';
 import moment from 'moment'
 import schedule from 'node-schedule'
 
-const dateFromDb = new Date("2019-12-18")
-const myDate = new Date()
-const today = new Date().getDate()
-const last = moment().subtract('1', 'd').toDate().getDate()
-console.log(last - today)
+function getDateDiff(dateFromDb) {
+    const today = standardDate().getDate()
+    const last = moment(dateFromDb).subtract('1', 'd').toDate().getDate()
+    return today === last
+}
+
+console.log('dateDiff', getDateDiff(new Date("2019-12-15")))
+
+console.log(new Date("2019-12-17").getDate())
 
 /* 
     *    *    *    *    *    *
