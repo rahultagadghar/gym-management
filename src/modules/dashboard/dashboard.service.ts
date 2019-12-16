@@ -33,7 +33,7 @@ export class DashBoardService {
         }
     }
 
-    async calculateAmount(body) {
+    async calculateAmount(body: DashBoardDTO) {
 
         const gotPackage = await pack.getDoc(body.packageId)
 
@@ -42,7 +42,7 @@ export class DashBoardService {
         const dueAmount = amountToPay - body.amount - body.discount
 
         const amountPaidTillNow = [{
-            date: standardDate(),
+            date: body.dateOfRegistration,
             amount: body.amount,
             discount: body.discount
         }]
@@ -55,7 +55,11 @@ export class DashBoardService {
 
     async saveDashboard(req, res: ExpressResponse, next) {
         try {
-            const body: DashBoardDTO = req.body
+            const { body } = req
+            
+            if (!body.dateOfRegistration) {
+                body.dateOfRegistration = standardDate()
+            }
 
             const paymentPayload = await new DashBoardService().calculateAmount(body)
 

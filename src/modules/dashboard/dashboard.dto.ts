@@ -68,6 +68,10 @@ export class DashBoardDTO {
     @IsNumber()
     discount: number
 
+    @IsDateString()
+    @IsOptional()
+    dateOfRegistration: string
+
     @IsString()
     @IsOptional()
     active: boolean // required [true when registers by default ],

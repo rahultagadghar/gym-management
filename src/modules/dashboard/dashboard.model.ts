@@ -23,7 +23,7 @@ const dashBoardSchema = createSchema(
         personalTrainer: Type.string({ default: null }),
         imageUrl: Type.string({ default: null }),
 
-        dateOfRegistration: Type.date({ default: standardDate(), immutable: true }),
+        dateOfRegistration: Type.date({ required: true, immutable: true }),
         memberShip: Type.string({ required: true, immutable: true }),
 
         paymentId: Type.objectId({ required: true, immutable: true }),
